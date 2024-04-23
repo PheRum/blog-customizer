@@ -3,7 +3,7 @@ import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
 import clsx from 'clsx';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     ArticleStateType,
     backgroundColors,
@@ -18,6 +18,7 @@ import { Text } from 'components/text';
 import { Select } from 'components/select';
 import { RadioGroup } from 'components/radio-group';
 import { Separator } from 'components/separator';
+import { useClickAway } from 'src/hook/useClickAway';
 
 type ArticleParamsFormType = {
     title: string;
@@ -30,27 +31,7 @@ export const ArticleParamsForm = ({ title, params, setParams }: ArticleParamsFor
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [form, setForm] = useState<ArticleStateType>(params);
 
-    useEffect(() => {
-        const handleEsc = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                setIsOpen(false);
-            }
-        };
-
-        const handleClickOutside = (e: MouseEvent) => {
-            if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-
-        document.addEventListener('keydown', handleEsc);
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('keydown', handleEsc);
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+    useClickAway(sidebarRef, () => setIsOpen(false));
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
